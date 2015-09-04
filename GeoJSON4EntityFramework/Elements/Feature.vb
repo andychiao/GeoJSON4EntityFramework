@@ -59,5 +59,28 @@ Namespace Elements
 
             Return f
         End Function
+
+        Public Shared Function FromDbGeography(inp As DbGeography) As Feature
+            Dim f As New Feature
+
+            Select Case inp.SpatialTypeName
+                Case "MultiPolygon"
+                    f.Geometry = MultiPolygon.FromDbGeography(inp)
+                Case "Polygon"
+                    f.Geometry = Polygon.FromDbGeography(inp)
+                Case "Point"
+                    f.Geometry = Point.FromDbGeography(inp)
+                Case "MultPoint"
+                    f.Geometry = MultiPoint.FromDbGeography(inp)
+                Case "GeometryCollection"
+                    f.Geometry = GeometryCollection.FromDbGeography(inp)
+                Case "LineString"
+                    f.Geometry = LineString.FromDbGeography(inp)
+                Case "MultiLineString"
+                    f.Geometry = MultiLineString.FromDbGeography(inp)
+            End Select
+
+            Return f
+        End Function
     End Class
 End Namespace
