@@ -18,6 +18,12 @@ Namespace Elements
             Return obj
         End Function
 
+        Shared Function FromDbGeography(inp As DbGeography) As IGeoJsonGeometry
+            Dim obj As New GeometryCollection()
+            obj.CreateFromDbGeography(inp)
+            Return obj
+        End Function
+
         Public Sub CreateFromDbGeometry(inp As DbGeometry)
             If inp.SpatialTypeName <> "GeometryCollection" Then Throw New ArgumentException
             Geometries.Clear()
@@ -37,6 +43,29 @@ Namespace Elements
                         Geometries.Add(LineString.FromDbGeometry(element))
                     Case "MultiLineString"
                         Geometries.Add(MultiLineString.FromDbGeometry(element))
+                End Select
+            Next
+        End Sub
+
+        Public Sub CreateFromDbGeography(inp As DbGeography)
+            If inp.SpatialTypeName <> "GeometryCollection" Then Throw New ArgumentException
+            Geometries.Clear()
+
+            For i As Integer = 1 To inp.ElementCount
+                Dim element = inp.ElementAt(i)
+                Select Case element.SpatialTypeName
+                    Case "MultiPolygon"
+                        Geometries.Add(MultiPolygon.FromDbGeography(element))
+                    Case "Polygon"
+                        Geometries.Add(Polygon.FromDbGeography(element))
+                    Case "Point"
+                        Geometries.Add(Point.FromDbGeography(element))
+                    Case "MultiPoint"
+                        Geometries.Add(MultiPoint.FromDbGeography(element))
+                    Case "LineString"
+                        Geometries.Add(LineString.FromDbGeography(element))
+                    Case "MultiLineString"
+                        Geometries.Add(MultiLineString.FromDbGeography(element))
                 End Select
             Next
         End Sub

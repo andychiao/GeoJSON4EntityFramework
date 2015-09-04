@@ -18,6 +18,7 @@ Namespace Base
         Public MustOverride Sub CreateFromDbGeometry(inp As DbGeometry)
 
         Public Shared Function FromDbGeometry(inp As DbGeometry) As GeoJsonGeometry(Of T)
+            If inp Is Nothing Then Return Nothing
             Dim obj As GeoJsonGeometry(Of T) = CTypeDynamic(Activator.CreateInstance(Of T)(), GetType(T))
 
             'obj.BoundingBox = New Double(3) {
@@ -27,6 +28,14 @@ Namespace Base
             '    inp.Envelope.PointAt(3).XCoordinate
             '}
             obj.CreateFromDbGeometry(inp)
+            Return obj
+        End Function
+
+        Public Shared Function FromDbGeography(inp As DbGeography) As GeoJsonGeometry(Of T)
+            If inp Is Nothing Then Return Nothing
+            Dim obj As GeoJsonGeometry(Of T) = CTypeDynamic(Activator.CreateInstance(Of T)(), GetType(T))
+
+            obj.CreateFromDbGeometry(DbGeometry.FromBinary(inp.AsBinary()))
             Return obj
         End Function
     End Class
